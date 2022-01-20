@@ -10,8 +10,20 @@ def test_bfs_traversal():
     using the 'tiny_network.adjlist' file and assert 
     that all nodes are being traversed (ie. returns 
     the right number of nodes, in the right order, etc.)
+
+    33232663 is only connected from Hani and Michael and
+    Hani is not adjacent to Michael.
+    Therefore if I remove 33232663 from Hani start node
+    I should be able to get it from Michael's connection.
+    So if I remove each others traversal from Hani's and
+    33232663's BFS traversal it would be equivalent.
     """
-    pass
+    g = graph.Graph("data/tiny_network.adjlist")
+    x = g.bfs("Hani Goodarzi")
+    y = g.bfs("33232663")
+    x = x.remove("33232663")
+    y = y.remove("Hani Goodarzi")
+    assert x == y
 
 def test_bfs():
     """
@@ -24,4 +36,9 @@ def test_bfs():
     Include an additional test for nodes that are not connected 
     which should return None. 
     """
-    pass
+    g = graph.Graph("data/citation_network.adjlist")
+    x = g.bfs("Lani Wu",'31308376') # This can be any random connection
+    y = x[1:]
+    z = g.bfs(y[0], y[-1])
+    assert y == z # Subset of the connection has to be true
+    assert None == g.bfs("Steven Altschuler", "Me")

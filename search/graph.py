@@ -1,3 +1,5 @@
+import queue
+from urllib.request import OpenerDirector
 import networkx as nx
 
 class Graph:
@@ -21,8 +23,30 @@ class Graph:
         * If there is an end node and a path does not exist, return None
 
         """
-        return
-
-
-
-
+        queue = [start]
+        visited = {start: True}
+        if end is None:
+            while queue:
+                current = queue.pop(0) # It's pretty inefficient (O(N)) but whatever
+                for neighbor in self.graph.neighbors(current):
+                    if visited.get(neighbor) == None: # Probably should use defaultdict
+                        queue.append(neighbor)
+                        visited[neighbor] = True 
+            return list(visited.keys()) # Maintains insertion order
+        if end == start:
+            return queue
+        backtrack = {}
+        while queue:
+            current = queue.pop(0)
+            for neighbor in self.graph.neighbors(current):
+                if neighbor == end:
+                    trace = [neighbor,current]
+                    while start != current: # Traces all the way back to the start
+                        current = backtrack.get(current)
+                        trace.append(current)
+                    return trace[::-1] # Returns from start to end
+                if visited.get(neighbor) == None:
+                    visited[neighbor] = True 
+                    backtrack[neighbor] = current # Points backwards
+                    queue.append(neighbor)
+        return None # Exhausted all paths w/o a match
